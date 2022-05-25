@@ -6,11 +6,11 @@ var overlayBg = document.getElementById("myOverlay");
 
 // Toggle between showing and hiding the sidebar, and add overlay effect
 function w3_open() {
-  if (mySidebar.style.display === 'block') {
-    mySidebar.style.display = 'none';
+  if (mySidebar.style.display === "block") {
+    mySidebar.style.display = "none";
     overlayBg.style.display = "none";
   } else {
-    mySidebar.style.display = 'block';
+    mySidebar.style.display = "block";
     overlayBg.style.display = "block";
   }
 }
@@ -22,8 +22,20 @@ function w3_close() {
 }
 
 var vm = new Vue({
-  el:"#app",
+  el: "#app",
   data: {
-    
-  }
+    masterMenu: [],
+  },
+  created: function () {
+    let vm = this;
+
+    axios
+      .get("http://localhost:8080/menus")
+      .then(function (response) {
+        vm.masterMenu = response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  },
 });
