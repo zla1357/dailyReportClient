@@ -21,21 +21,26 @@ function w3_close() {
   overlayBg.style.display = "none";
 }
 
-var vm = new Vue({
+let vm = new Vue({
   el: "#app",
   data: {
     masterMenu: [],
   },
   created: function () {
-    let vm = this;
+    this.getNavItems();
+  },
+  methods: {
+    getNavItems: function () {
+      let vm = this;
 
-    axios
-      .get("http://localhost:8080/menus")
-      .then(function (response) {
-        vm.masterMenu = response.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+      axios
+        .get("http://localhost:8080/menus")
+        .then(function (response) {
+          vm.masterMenu = response.data;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
   },
 });
