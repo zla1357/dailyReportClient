@@ -21,10 +21,15 @@ function w3_close() {
   overlayBg.style.display = "none";
 }
 
+Vue.component("top-nav", {
+  template: ``,
+});
+
 let vm = new Vue({
   el: "#app",
   data: {
     masterMenu: [],
+    subMenu: [],
   },
   created: function () {
     this.getNavItems();
@@ -37,6 +42,19 @@ let vm = new Vue({
         .get("http://localhost:8080/menus")
         .then(function (response) {
           vm.masterMenu = response.data;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    clickMasterItem: function (masterId) {
+      this.getLeftMenu(masterId);
+    },
+    getLeftMenu: function (masterId) {
+      axios
+        .get("http://localhost:8080/menu/sub?parentId=" + masterId)
+        .then(function (response) {
+          vm.subMenu = response.data;
         })
         .catch(function (error) {
           console.log(error);
