@@ -9,10 +9,10 @@ let vm = new Vue({
     subMenu: [],
   },
   created: function () {
-    this.getNavItems();
+    this.getMasterMenu();
   },
   methods: {
-    getNavItems: function () {
+    getMasterMenu: function () {
       let vm = this;
 
       axios
@@ -24,10 +24,10 @@ let vm = new Vue({
           console.log(error);
         });
     },
-    clickMasterItem: function (masterId) {
-      this.getLeftMenu(masterId);
+    onClickMasterItem: function (masterId) {
+      this.getSubMenu(masterId);
     },
-    getLeftMenu: function (masterId) {
+    getSubMenu: function (masterId) {
       axios
         .get("http://localhost:8080/menu/sub?parentId=" + masterId)
         .then(function (response) {
@@ -39,6 +39,9 @@ let vm = new Vue({
     },
     onClickMainTitle: function () {
       location.reload();
+    },
+    onClickSubItem: function () {
+      alert("클릭");
     },
   },
 });
