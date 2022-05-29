@@ -19,7 +19,13 @@
             <em class="fa fa-bars"></em>
           </a>
           <a href="#" class="w3-bar-item w3-button w3-theme-l1" @click="onClickMainTitle">메인</a>
-          <a href="#" class="w3-bar-item w3-button w3-hover-white" v-for="item in masterMenu" v-bind:key="item.id" @click="clickMasterItem(item.id)">
+          <a
+            href="#"
+            class="w3-bar-item w3-button w3-hover-white"
+            v-for="item in masterMenu"
+            v-bind:key="item.id"
+            @click="onClickMasterItem(item.id)"
+          >
             {{ item.menuName }}
           </a>
         </div>
@@ -31,7 +37,9 @@
           <em class="fa fa-remove"></em>
         </a>
         <h4 class="w3-bar-item"><strong>Menu</strong></h4>
-        <a class="w3-bar-item w3-button w3-hover-black" href="#" v-for="item in subMenu" v-bind:key="item.id">{{ item.menuName }}</a>
+        <a class="w3-bar-item w3-button w3-hover-black" href="#" v-for="item in subMenu" v-bind:key="item.id" @click="onClickSubItem"
+          >{{ item.menuName }}</a
+        >
       </nav>
 
       <!-- Overlay effect when opening sidebar on small screens -->
