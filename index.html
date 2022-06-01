@@ -37,9 +37,9 @@
           <em class="fa fa-remove"></em>
         </a>
         <h4 class="w3-bar-item"><strong>Menu</strong></h4>
-        <a class="w3-bar-item w3-button w3-hover-black" href="#" v-for="item in subMenu" v-bind:key="item.id" @click="onClickSubItem(item)"
-          >{{ item.menuName }}</a
-        >
+        <a class="w3-bar-item w3-button w3-hover-black" href="#" v-for="item in subMenu" v-bind:key="item.id" @click="onClickSubItem(item)">
+          <router-link v-bind:to="{ name: item.itemContent.reqUrl, query: {respvalue: respValue} }"> {{ item.menuName }} </router-link>
+        </a>
       </nav>
 
       <!-- Overlay effect when opening sidebar on small screens -->
@@ -49,37 +49,7 @@
       <div class="w3-main" style="margin-left: 250px">
         <div class="w3-row w3-padding-64">
           <div class="w3-twothird w3-container">
-            <h1 class="w3-text-teal">Heading</h1>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-              minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur
-              adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-              ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
-          </div>
-        </div>
-
-        <div class="w3-row">
-          <div class="w3-twothird w3-container">
-            <h1 class="w3-text-teal">Heading</h1>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-              minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur
-              adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-              ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
-          </div>
-        </div>
-
-        <div class="w3-row w3-padding-64">
-          <div class="w3-twothird w3-container">
-            <h1 class="w3-text-teal">Heading</h1>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-              minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur
-              adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-              ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
+            <router-view></router-view>
           </div>
         </div>
 
@@ -110,6 +80,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router@2"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="script/app.js"></script>
     <script src="script/vue.js"></script>
