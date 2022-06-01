@@ -1,12 +1,41 @@
-Vue.component("top-nav", {
-  template: ``,
+const requestURL = "http://localhost:8080/";
+
+let ReportListComponent = {
+  template: `<div>
+    <h1 class="w3-text-teal">업무일지 조회</h1>
+    <p v-for="report in $route.query.respvalue" :key="$route.query.respvalue.id">{{ report.content }}</p>
+  </div>`,
+  created: function () {},
+};
+
+let ReportModifyComponent = {
+  template: `<div>
+    <h1 class="w3-text-teal">업무일지 수정</h1>
+  </div>`,
+};
+
+let router = new VueRouter({
+  routes: [
+    {
+      path: "/reports",
+      name: "reports",
+      component: ReportListComponent,
+    },
+    {
+      path: "/report",
+      name: "report",
+      component: ReportModifyComponent,
+    },
+  ],
 });
 
-let vm = new Vue({
+let model = new Vue({
   el: "#app",
+  router: router,
   data: {
     masterMenu: [],
     subMenu: [],
+    respValue: [],
   },
   created: function () {
     this.getMasterMenu();
@@ -16,7 +45,7 @@ let vm = new Vue({
       let vm = this;
 
       axios
-        .get("http://localhost:8080/menus")
+        .get(requestURL + "menus")
         .then(function (response) {
           vm.masterMenu = response.data;
         })
@@ -28,8 +57,9 @@ let vm = new Vue({
       this.getSubMenu(masterId);
     },
     getSubMenu: function (masterId) {
+      let vm = this;
       axios
-        .get("http://localhost:8080/menu/sub?parentId=" + masterId)
+        .get(requestURL + "menu/sub?parentId=" + masterId)
         .then(function (response) {
           vm.subMenu = response.data;
         })
@@ -45,6 +75,7 @@ let vm = new Vue({
     },
     requestMenuUrl: function (item) {
       let content = item.itemContent;
+      let vm = this;
 
       if (content.reqUrl === "reports") {
         if (content.method === "GET") {
@@ -55,9 +86,9 @@ let vm = new Vue({
           let endDate = this.formatDate(nowDate);
 
           axios
-            .get("http://localhost:8080/" + content.reqUrl + "?startDate=" + startDate + "&endDate=" + endDate)
+            .get(requestURL + content.reqUrl + "?startDate=" + startDate + "&endDate=" + endDate)
             .then(function (response) {
-              console.log(response.data);
+              vm.respValue = response.data;
             })
             .catch(function (error) {
               console.log(error);
@@ -67,8 +98,8 @@ let vm = new Vue({
     },
     formatDate: function (date) {
       let year = date.getFullYear();
-      let month = new String(date.getMonth() + 1).toString().padStart(2, "0");
-      let day = new String(date.getDate()).padStart(2, "0");
+      let month = String(date.getMonth() + 1).padStart(2, "0");
+      let day = String(date.getDate()).padStart(2, "0");
 
       return year + "-" + month + "-" + day;
     },
