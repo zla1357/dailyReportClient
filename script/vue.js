@@ -5,7 +5,6 @@ let ReportListComponent = {
     <h1 class="w3-text-teal">업무일지 조회</h1>
     <p v-for="report in $route.query.respvalue" :key="$route.query.respvalue.id">{{ report.content }}</p>
   </div>`,
-  created: function () {},
 };
 
 let ReportModifyComponent = {
@@ -42,14 +41,12 @@ let model = new Vue({
   },
   methods: {
     getMasterMenu: function () {
-      let vm = this;
-
       axios
         .get(requestURL + "menus")
-        .then(function (response) {
-          vm.masterMenu = response.data;
+        .then((response) => {
+          this.masterMenu = response.data;
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error);
         });
     },
@@ -57,13 +54,12 @@ let model = new Vue({
       this.getSubMenu(masterId);
     },
     getSubMenu: function (masterId) {
-      let vm = this;
       axios
         .get(requestURL + "menu/sub?parentId=" + masterId)
-        .then(function (response) {
-          vm.subMenu = response.data;
+        .then((response) => {
+          this.subMenu = response.data;
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error);
         });
     },
@@ -75,7 +71,6 @@ let model = new Vue({
     },
     requestMenuUrl: function (item) {
       let content = item.itemContent;
-      let vm = this;
 
       if (content.reqUrl === "reports") {
         if (content.method === "GET") {
@@ -87,10 +82,10 @@ let model = new Vue({
 
           axios
             .get(requestURL + content.reqUrl + "?startDate=" + startDate + "&endDate=" + endDate)
-            .then(function (response) {
-              vm.respValue = response.data;
+            .then((response) => {
+              this.respValue = response.data;
             })
-            .catch(function (error) {
+            .catch((error) => {
               console.log(error);
             });
         }
