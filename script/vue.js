@@ -47,18 +47,14 @@ let ReportListComponent = {
     requestMenuUrl: function (item) {
       let content = item;
 
-      if (content.reqUrl === "reports") {
-        if (content.method === "GET") {
-          axios
-            .get(requestURL + content.reqUrl + "?startDate=" + this.startDate + "&endDate=" + this.endDate)
-            .then((response) => {
-              this.reports = response.data;
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      }
+      axios
+        .get(requestURL + content.reqUrl + "?startDate=" + this.startDate + "&endDate=" + this.endDate)
+        .then((response) => {
+          this.reports = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     formatDate: function (date) {
       return date.toISOString().substring(0, 10);
