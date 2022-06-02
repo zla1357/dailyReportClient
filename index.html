@@ -37,8 +37,8 @@
           <em class="fa fa-remove"></em>
         </a>
         <h4 class="w3-bar-item"><strong>Menu</strong></h4>
-        <a class="w3-bar-item w3-button w3-hover-black" href="#" v-for="item in subMenu" v-bind:key="item.id" @click="onClickSubItem(item)">
-          <router-link v-bind:to="{ name: item.itemContent.reqUrl, query: {respvalue: respValue} }"> {{ item.menuName }} </router-link>
+        <a class="w3-bar-item w3-button w3-hover-black" href="#" v-for="item in subMenu" v-bind:key="item.id" @click="onClickSubItem">
+          <router-link v-bind:to="{ name: item.itemContent.reqUrl, query: {content: item.itemContent} }"> {{ item.menuName }} </router-link>
         </a>
       </nav>
 
