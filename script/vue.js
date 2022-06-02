@@ -1,10 +1,56 @@
 const requestURL = "http://localhost:8080/";
 
+let EmptyPageComponent = {
+  template: `<div></div>`,
+};
+
 let ReportListComponent = {
   template: `<div>
     <h1 class="w3-text-teal">업무일지 조회</h1>
-    <p v-for="report in $route.query.respvalue" :key="$route.query.respvalue.id">{{ report.content }}</p>
+    <input type="button" value="조회" @click="onSearchBtnClick">
+    <p v-for="report in reports" :key="report.id">{{ report.content }}</p>
   </div>`,
+  data: function () {
+    return {
+      reports: [],
+      content: {},
+    };
+  },
+  methods: {
+    onSearchBtnClick: function () {
+      this.content = this.$route.query.content;
+      this.requestMenuUrl(this.content);
+    },
+    requestMenuUrl: function (item) {
+      let content = item;
+
+      if (content.reqUrl === "reports") {
+        if (content.method === "GET") {
+          let startDate = this.formatDate(new Date());
+
+          let nowDate = new Date();
+          nowDate.setDate(nowDate.getDate() + 1);
+          let endDate = this.formatDate(nowDate);
+
+          axios
+            .get(requestURL + content.reqUrl + "?startDate=" + startDate + "&endDate=" + endDate)
+            .then((response) => {
+              this.reports = response.data;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      }
+    },
+    formatDate: function (date) {
+      let year = date.getFullYear();
+      let month = String(date.getMonth() + 1).padStart(2, "0");
+      let day = String(date.getDate()).padStart(2, "0");
+
+      return year + "-" + month + "-" + day;
+    },
+  },
 };
 
 let ReportModifyComponent = {
@@ -25,6 +71,11 @@ let router = new VueRouter({
       name: "report",
       component: ReportModifyComponent,
     },
+    {
+      path: "/",
+      name: "empty",
+      component: EmptyPageComponent,
+    },
   ],
 });
 
@@ -38,6 +89,7 @@ let model = new Vue({
   },
   created: function () {
     this.getMasterMenu();
+    router.push("empty");
   },
   methods: {
     getMasterMenu: function () {
@@ -66,37 +118,6 @@ let model = new Vue({
     onClickMainTitle: function () {
       location.reload();
     },
-    onClickSubItem: function (item) {
-      this.requestMenuUrl(item);
-    },
-    requestMenuUrl: function (item) {
-      let content = item.itemContent;
-
-      if (content.reqUrl === "reports") {
-        if (content.method === "GET") {
-          let startDate = this.formatDate(new Date());
-
-          let nowDate = new Date();
-          nowDate.setDate(nowDate.getDate() + 1);
-          let endDate = this.formatDate(nowDate);
-
-          axios
-            .get(requestURL + content.reqUrl + "?startDate=" + startDate + "&endDate=" + endDate)
-            .then((response) => {
-              this.respValue = response.data;
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      }
-    },
-    formatDate: function (date) {
-      let year = date.getFullYear();
-      let month = String(date.getMonth() + 1).padStart(2, "0");
-      let day = String(date.getDate()).padStart(2, "0");
-
-      return year + "-" + month + "-" + day;
-    },
+    onClickSubItem: function () {},
   },
 });
