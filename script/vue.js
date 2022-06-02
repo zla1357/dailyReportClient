@@ -118,6 +118,5 @@ let model = new Vue({
     onClickMainTitle: function () {
       location.reload();
     },
-    onClickSubItem: function () {},
   },
 });
