@@ -5,16 +5,39 @@ let EmptyPageComponent = {
 };
 
 let ReportListComponent = {
-  template: `<div>
+  template: `
+  <div>
+
     <h1 class="w3-text-teal">업무일지 조회</h1>
-    <input type="button" value="조회" @click="onSearchBtnClick">
-    <p v-for="report in reports" :key="report.id">{{ report.content }}</p>
+
+    <div class="search-condition">
+      <label for="start">조회 기간:</label>
+      <input type="date" id="start" name="search-start" v-model="startDate">
+      ~
+      <input type="date" id="end" name="search-end" v-model="endDate">
+
+      <input type="button" value="조회" @click="onSearchBtnClick">
+    </div>
+
+    <div class="report-content">
+      <p v-for="report in reports" :key="report.id">{{ report.content }}</p>
+    </div>
+
   </div>`,
   data: function () {
     return {
       reports: [],
       content: {},
+      startDate: "",
+      endDate: "",
     };
+  },
+  created: function () {
+    this.startDate = this.formatDate(new Date());
+
+    let nowDate = new Date();
+    this.plusDays(nowDate, 1);
+    this.endDate = this.formatDate(nowDate);
   },
   methods: {
     onSearchBtnClick: function () {
@@ -26,14 +49,8 @@ let ReportListComponent = {
 
       if (content.reqUrl === "reports") {
         if (content.method === "GET") {
-          let startDate = this.formatDate(new Date());
-
-          let nowDate = new Date();
-          nowDate.setDate(nowDate.getDate() + 1);
-          let endDate = this.formatDate(nowDate);
-
           axios
-            .get(requestURL + content.reqUrl + "?startDate=" + startDate + "&endDate=" + endDate)
+            .get(requestURL + content.reqUrl + "?startDate=" + this.startDate + "&endDate=" + this.endDate)
             .then((response) => {
               this.reports = response.data;
             })
@@ -44,11 +61,10 @@ let ReportListComponent = {
       }
     },
     formatDate: function (date) {
-      let year = date.getFullYear();
-      let month = String(date.getMonth() + 1).padStart(2, "0");
-      let day = String(date.getDate()).padStart(2, "0");
-
-      return year + "-" + month + "-" + day;
+      return date.toISOString().substring(0, 10);
+    },
+    plusDays: function (date, days) {
+      date.setDate(date.getDate() + days);
     },
   },
 };
