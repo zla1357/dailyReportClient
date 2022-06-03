@@ -20,7 +20,7 @@ let ReportListComponent = {
     </div>
 
     <div class="report-content">
-      <p v-for="report in reports" :key="report.id">{{ report.content }}</p>
+      <p v-for="report in reports" :key="report.id">{{ formatDateTime(report.inputDate) }}</p>
     </div>
 
   </div>`,
@@ -44,9 +44,7 @@ let ReportListComponent = {
       this.content = this.$route.query.content;
       this.requestMenuUrl(this.content);
     },
-    requestMenuUrl: function (item) {
-      let content = item;
-
+    requestMenuUrl: function (content) {
       axios
         .get(requestURL + content.reqUrl + "?startDate=" + this.startDate + "&endDate=" + this.endDate)
         .then((response) => {
@@ -61,6 +59,19 @@ let ReportListComponent = {
     },
     plusDays: function (date, days) {
       date.setDate(date.getDate() + days);
+    },
+    formatDateTime: function (dateTime) {
+      const paramDate = new Date(dateTime);
+      const dt = {
+        year: () => paramDate.getFullYear(),
+        month: () => (paramDate.getMonth() + 1).toString().padStart(2, "0"),
+        day: () => paramDate.getDate().toString().padStart(2, "0"),
+        hour: () => paramDate.getHours(),
+        min: () => paramDate.getMinutes(),
+        sec: () => paramDate.getSeconds(),
+      };
+
+      return dt.year() + "-" + dt.month() + "-" + dt.day() + " " + dt.hour() + ":" + dt.min() + ":" + dt.sec();
     },
   },
 };
