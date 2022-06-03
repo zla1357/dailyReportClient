@@ -73,10 +73,15 @@ let ReportListComponent = {
 
 let WriteReportComponent = {
   template: `
-  <div>
+  <div class="report-container">
     <h1 class="w3-text-teal">업무일지 작성</h1>
-    <div class="title">
-      <p><h3>작성일시: {{ inputData }}</h3></p></p>
+    <div class="report-content-container">
+      <label class="label-input-datetime">
+        작성일시: {{ inputData }}
+      </label>
+      <input type="button" id="registry-report" class="w3-button w3-black" value="등록">
+
+      <textarea class="report-content w3-input w3-border"></textarea>
     </div>
   </div>`,
   data: function () {
