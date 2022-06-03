@@ -11,16 +11,21 @@ let ReportListComponent = {
     <h1 class="w3-text-teal">업무일지 조회</h1>
 
     <div class="search-condition">
-      <label for="start">조회 기간:</label>
+      <label for="start" >조회 기간:</label>
       <input type="date" id="start" name="search-start" v-model="startDate">
       ~
       <input type="date" id="end" name="search-end" v-model="endDate">
 
-      <input type="button" value="조회" @click="onSearchBtnClick">
+      <input class="w3-button w3-black" type="button" value="조회" @click="onSearchBtnClick">
     </div>
 
     <div class="report-content">
-      <p v-for="report in reports" :key="report.id">{{ formatDateTime(report.inputDate) }}</p>
+      <ul class="w3-ul w3-border">
+        <li><h3>작성일자</h3></li>
+        <li v-for="report in reports" :key="report.id">
+          {{ formatDateTime(report.inputDate) }}
+        </li>
+      </ul>
     </div>
 
   </div>`,
@@ -76,9 +81,11 @@ let ReportListComponent = {
   },
 };
 
-let ReportModifyComponent = {
-  template: `<div>
-    <h1 class="w3-text-teal">업무일지 수정</h1>
+let WriteReportComponent = {
+  template: `
+  <div>
+    <h1 class="w3-text-teal">업무일지 작성</h1>
+
   </div>`,
 };
 
@@ -92,7 +99,7 @@ let router = new VueRouter({
     {
       path: "/report",
       name: "report",
-      component: ReportModifyComponent,
+      component: WriteReportComponent,
     },
     {
       path: "/",
