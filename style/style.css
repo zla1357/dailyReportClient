@@ -15,3 +15,6 @@ h6 {
   bottom: 0;
   height: inherit;
 }
+.search-condition {
+  margin-bottom: 10px;
+}
