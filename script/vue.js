@@ -66,17 +66,7 @@ let ReportListComponent = {
       date.setDate(date.getDate() + days);
     },
     formatDateTime: function (dateTime) {
-      const paramDate = new Date(dateTime);
-      const dt = {
-        year: () => paramDate.getFullYear(),
-        month: () => (paramDate.getMonth() + 1).toString().padStart(2, "0"),
-        day: () => paramDate.getDate().toString().padStart(2, "0"),
-        hour: () => paramDate.getHours(),
-        min: () => paramDate.getMinutes(),
-        sec: () => paramDate.getSeconds(),
-      };
-
-      return dt.year() + "-" + dt.month() + "-" + dt.day() + " " + dt.hour() + ":" + dt.min() + ":" + dt.sec();
+      return formatDateTime(dateTime);
     },
   },
 };
@@ -85,8 +75,18 @@ let WriteReportComponent = {
   template: `
   <div>
     <h1 class="w3-text-teal">업무일지 작성</h1>
-
+    <div class="title">
+      <p><h3>작성일시: {{ inputData }}</h3></p></p>
+    </div>
   </div>`,
+  data: function () {
+    return {
+      inputData: "",
+    };
+  },
+  created: function () {
+    this.inputData = formatDateTime(new Date());
+  },
 };
 
 let router = new VueRouter({
@@ -150,3 +150,17 @@ let model = new Vue({
     },
   },
 });
+
+function formatDateTime(dateTime) {
+  const paramDate = new Date(dateTime);
+  const dt = {
+    year: () => paramDate.getFullYear(),
+    month: () => (paramDate.getMonth() + 1).toString().padStart(2, "0"),
+    day: () => paramDate.getDate().toString().padStart(2, "0"),
+    hour: () => paramDate.getHours(),
+    min: () => paramDate.getMinutes(),
+    sec: () => paramDate.getSeconds(),
+  };
+
+  return dt.year() + "-" + dt.month() + "-" + dt.day() + " " + dt.hour() + ":" + dt.min() + ":" + dt.sec();
+}
