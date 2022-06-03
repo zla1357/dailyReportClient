@@ -18,3 +18,28 @@ h6 {
 .search-condition {
   margin-bottom: 10px;
 }
+.report-content {
+  width: 100%;
+  height: 90%;
+  resize: none;
+  margin-top: 20px;
+}
+#app {
+  height: 100vh;
+}
+
+.main-content {
+  width: 100%;
+  height: 100%;
+}
+
+.w3-main,
+.main-container,
+.report-container,
+.report-content-container {
+  height: 100%;
+}
+.label-input-datetime {
+  font-size: large;
+  margin-right: 20px;
+}
