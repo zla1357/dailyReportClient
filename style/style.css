@@ -22,7 +22,7 @@ h6 {
   width: 100%;
   height: 90%;
   resize: none;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 #app {
   height: 100vh;
@@ -33,6 +33,9 @@ h6 {
   height: 100%;
 }
 
+.main-view-component {
+  height: 95%;
+}
 .w3-main,
 .main-container,
 .report-container,
