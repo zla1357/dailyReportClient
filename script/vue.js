@@ -21,7 +21,7 @@ let ReportListComponent = {
 
     <div class="report-content">
       <ul class="w3-ul w3-border">
-        <li><h3>작성일자</h3></li>
+        <li><h3>작성내역</h3></li>
         <li v-for="report in reports" :key="report.id">
           {{ formatDateTime(report.inputDate) }}
         </li>
@@ -38,11 +38,11 @@ let ReportListComponent = {
     };
   },
   created: function () {
-    this.startDate = this.formatDate(new Date());
+    this.startDate = formatDate(new Date());
 
     let nowDate = new Date();
     this.plusDays(nowDate, 1);
-    this.endDate = this.formatDate(nowDate);
+    this.endDate = formatDate(nowDate);
   },
   methods: {
     onSearchBtnClick: function () {
@@ -59,9 +59,6 @@ let ReportListComponent = {
           console.log(error);
         });
     },
-    formatDate: function (date) {
-      return date.toISOString().substring(0, 10);
-    },
     plusDays: function (date, days) {
       date.setDate(date.getDate() + days);
     },
@@ -77,7 +74,7 @@ let WriteReportComponent = {
     <h1 class="w3-text-teal">업무일지 작성</h1>
     <div class="report-content-container">
       <label class="label-input-datetime">
-        작성일시: {{ inputData }}
+        작성일자: {{ formatDate(inputData) }}
       </label>
       <input type="button" id="registry-report" class="w3-button w3-black" value="등록">
 
@@ -91,6 +88,11 @@ let WriteReportComponent = {
   },
   created: function () {
     this.inputData = formatDateTime(new Date());
+  },
+  methods: {
+    formatDate: function (date) {
+      return formatDate(date);
+    },
   },
 };
 
@@ -168,4 +170,8 @@ function formatDateTime(dateTime) {
   };
 
   return dt.year() + "-" + dt.month() + "-" + dt.day() + " " + dt.hour() + ":" + dt.min() + ":" + dt.sec();
+}
+
+function formatDate(date) {
+  return new Date(date).toISOString().substring(0, 10);
 }
