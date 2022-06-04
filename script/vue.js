@@ -231,9 +231,24 @@ let MainViewComponent = {
 let LoginComponent = {
   template: `
   <div>
-    login
+    <form class="w3-container">
+      <h1>로그인</h1>
+      <label class="w3-text-black"><b>account</b></label>
+      <input class="w3-input w3-border" type="text">
+      
+      <label class="w3-text-black"><b>password</b></label>
+      <input class="w3-input w3-border" type="password">
+      
+      <button id="btn-login" class="w3-btn w3-black" @click="onClickLoginBtn">Register</button>
+    
+    </form>
   </div>
   `,
+  methods: {
+    onClickLoginBtn: function () {
+      this.$emit("on-login");
+    },
+  },
 };
 
 let loginRouter = new VueRouter({
@@ -258,8 +273,8 @@ let model = new Vue({
     this.$router.push("login");
   },
   methods: {
-    onLogin: function () {
-      this.$router.replace("mainView");
+    onLoginSuccess: function () {
+      this.$router.push("mainView");
     },
   },
 });
