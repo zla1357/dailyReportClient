@@ -96,7 +96,7 @@ let WriteReportComponent = {
   },
 };
 
-let router = new VueRouter({
+let mainRouter = new VueRouter({
   routes: [
     {
       path: "/reports",
@@ -116,17 +116,68 @@ let router = new VueRouter({
   ],
 });
 
-let model = new Vue({
-  el: "#app",
-  router: router,
-  data: {
-    masterMenu: [],
-    subMenu: [],
-    respValue: [],
+let MainViewComponent = {
+  template: `
+  <div class="main-view-component">
+    <!-- Navbar -->
+    <div class="w3-top">
+      <div class="w3-bar w3-theme w3-top w3-left-align w3-large">
+        <a class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white w3-large w3-theme-l1" href="javascript:void(0)" @click="openCloseSideBar">
+          <em class="fa fa-bars"></em>
+        </a>
+        <a href="#" class="w3-bar-item w3-button w3-theme-l1" @click="onClickMainTitle">메인</a>
+        <a
+          href="#"
+          class="w3-bar-item w3-button w3-hover-white"
+          v-for="item in masterMenu"
+          v-bind:key="item.id"
+          @click="onClickMasterItem(item.id)"
+        >
+          {{ item.menuName }}
+        </a>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <nav class="w3-sidebar w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-left" id="mySidebar" ref="sideBar">
+      <a href="javascript:void(0)" class="w3-right w3-xlarge w3-padding-large w3-hover-black w3-hide-large" title="Close Menu" @click="closeSideBar">
+        <em class="fa fa-remove"></em>
+      </a>
+      <h4 class="w3-bar-item"><strong>Menu</strong></h4>
+      <a class="w3-bar-item w3-button w3-hover-black" href="#" v-for="item in subMenu" v-bind:key="item.id" @click="onClickSubMenu">
+        <router-link
+          class="w3-bar-item w3-button w3-hover-black w3-animate-top"
+          v-bind:to="{ name: item.itemContent.reqUrl, query: {content: item.itemContent} }"
+        >
+          {{ item.menuName }}
+        </router-link>
+      </a>
+    </nav>
+
+    <!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
+    <div class="w3-main" style="margin-left: 250px">
+      <div class="w3-row w3-padding-64 main-container">
+        <div class="w3-twothird w3-container main-content">
+          <router-view></router-view>
+        </div>
+      </div>
+      <!-- END MAIN -->
+    </div>
+  </div>
+  `,
+  router: mainRouter,
+  data: function () {
+    return {
+      masterMenu: [],
+      subMenu: [],
+      respValue: [],
+      sideBar: "",
+    };
   },
-  created: function () {
+  mounted: function () {
     this.getMasterMenu();
-    router.push("empty");
+    this.$router.push("empty");
+    this.sideBar = this.$refs.sideBar;
   },
   methods: {
     getMasterMenu: function () {
@@ -140,6 +191,7 @@ let model = new Vue({
         });
     },
     onClickMasterItem: function (masterId) {
+      this.openSideBar();
       this.getSubMenu(masterId);
     },
     getSubMenu: function (masterId) {
@@ -153,7 +205,61 @@ let model = new Vue({
         });
     },
     onClickMainTitle: function () {
-      location.reload();
+      this.$router.push("empty");
+    },
+    openCloseSideBar: function () {
+      if (this.sideBar.style.display === "block") {
+        this.closeSideBar();
+      } else {
+        this.openSideBar();
+      }
+    },
+    openSideBar: function () {
+      this.sideBar.style.display = "block";
+    },
+    closeSideBar: function () {
+      this.sideBar.style.display = "none";
+    },
+    onClickSubMenu: function () {
+      if (this.sideBar.style.display === "block") {
+        this.closeSideBar();
+      }
+    },
+  },
+};
+
+let LoginComponent = {
+  template: `
+  <div>
+    login
+  </div>
+  `,
+};
+
+let loginRouter = new VueRouter({
+  routes: [
+    {
+      path: "/login",
+      name: "login",
+      component: LoginComponent,
+    },
+    {
+      path: "/mainView",
+      name: "mainView",
+      component: MainViewComponent,
+    },
+  ],
+});
+
+let model = new Vue({
+  el: "#app",
+  router: loginRouter,
+  created: function () {
+    this.$router.push("login");
+  },
+  methods: {
+    onLogin: function () {
+      this.$router.replace("mainView");
     },
   },
 });
