@@ -12,59 +12,13 @@
   </head>
   <body>
     <div id="app">
-      <!-- Navbar -->
-      <div class="w3-top">
-        <div class="w3-bar w3-theme w3-top w3-left-align w3-large">
-          <a class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white w3-large w3-theme-l1" href="javascript:void(0)" onclick="w3_open()">
-            <em class="fa fa-bars"></em>
-          </a>
-          <a href="#" class="w3-bar-item w3-button w3-theme-l1" @click="onClickMainTitle">메인</a>
-          <a
-            href="#"
-            class="w3-bar-item w3-button w3-hover-white"
-            v-for="item in masterMenu"
-            v-bind:key="item.id"
-            @click="onClickMasterItem(item.id)"
-          >
-            {{ item.menuName }}
-          </a>
-        </div>
-      </div>
-
-      <!-- Sidebar -->
-      <nav class="w3-sidebar w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-left" id="mySidebar">
-        <a href="javascript:void(0)" onclick="w3_close()" class="w3-right w3-xlarge w3-padding-large w3-hover-black w3-hide-large" title="Close Menu">
-          <em class="fa fa-remove"></em>
-        </a>
-        <h4 class="w3-bar-item"><strong>Menu</strong></h4>
-        <a class="w3-bar-item w3-button w3-hover-black" href="#" v-for="item in subMenu" v-bind:key="item.id">
-          <router-link
-            class="w3-bar-item w3-button w3-hover-black w3-animate-top"
-            v-bind:to="{ name: item.itemContent.reqUrl, query: {content: item.itemContent} }"
-          >
-            {{ item.menuName }}
-          </router-link>
-        </a>
-      </nav>
-
-      <!-- Overlay effect when opening sidebar on small screens -->
-      <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor: pointer" title="close side menu" id="myOverlay"></div>
-
-      <!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
-      <div class="w3-main" style="margin-left: 250px">
-        <div class="w3-row w3-padding-64 main-container">
-          <div class="w3-twothird w3-container main-content">
-            <router-view></router-view>
-          </div>
-        </div>
-        <!-- END MAIN -->
-      </div>
+      <input type="button" value="login" @click="onLogin" />
+      <router-view></router-view>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-router@2"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="script/app.js"></script>
     <script src="script/vue.js"></script>
   </body>
 </html>
