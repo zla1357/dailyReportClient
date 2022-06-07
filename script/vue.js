@@ -166,18 +166,21 @@ let MainViewComponent = {
   </div>
   `,
   router: mainRouter,
+  props: ["member"],
   data: function () {
     return {
       masterMenu: [],
       subMenu: [],
       respValue: [],
       sideBar: "",
+      loginUser: {},
     };
   },
   mounted: function () {
     this.getMasterMenu();
     this.$router.push("empty");
     this.sideBar = this.$refs.sideBar;
+    this.loginUser = this.member;
   },
   methods: {
     getMasterMenu: function () {
@@ -234,19 +237,44 @@ let LoginComponent = {
     <form class="w3-container">
       <h1>로그인</h1>
       <label class="w3-text-black"><b>account</b></label>
-      <input class="w3-input w3-border" type="text">
+      <input class="w3-input w3-border" type="text" v-model="accountId">
       
       <label class="w3-text-black"><b>password</b></label>
-      <input class="w3-input w3-border" type="password">
+      <input class="w3-input w3-border" type="password" v-model="password" @keydown="onKeyDownPassword($event)">
       
-      <button id="btn-login" class="w3-btn w3-black" @click="onClickLoginBtn">Register</button>
+      <input type="button" id="btn-login" class="w3-btn w3-black" @click="onClickLoginBtn" value="Register">
     
     </form>
   </div>
   `,
+  data: function () {
+    return {
+      accountId: "",
+      password: "",
+    };
+  },
   methods: {
+    onKeyDownPassword: function (event) {
+      if (event.keyCode === 13) {
+        this.onClickLoginBtn();
+      }
+    },
     onClickLoginBtn: function () {
-      this.$emit("on-login");
+      axios
+        .post(requestURL + "login", {
+          accountId: this.accountId,
+          password: this.password,
+        })
+        .then((response) => {
+          if (response.hasOwnProperty("data")) {
+            this.$emit("on-login", response.data);
+          } else {
+            alert("오류");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };
@@ -260,7 +288,7 @@ let loginRouter = new VueRouter({
     },
     {
       path: "/mainView",
-      name: "mainView",
+      name: "mainViewComponent",
       component: MainViewComponent,
     },
   ],
@@ -268,13 +296,17 @@ let loginRouter = new VueRouter({
 
 let model = new Vue({
   el: "#app",
+  data: {
+    loginMember: {},
+  },
   router: loginRouter,
   created: function () {
     this.$router.push("login");
   },
   methods: {
-    onLoginSuccess: function () {
-      this.$router.push("mainView");
+    onLoginSuccess: function (member) {
+      this.loginMember = member;
+      this.$router.push({ name: "mainViewComponent" });
     },
   },
 });
