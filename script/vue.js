@@ -255,26 +255,35 @@ let LoginComponent = {
   },
   methods: {
     onKeyDownPassword: function (event) {
-      if (event.keyCode === 13) {
+      if (this.isKeyEnter(event.keyCode)) {
         this.onClickLoginBtn();
       }
     },
+    isKeyEnter: function (keyCode) {
+      return keyCode === 13;
+    },
     onClickLoginBtn: function () {
+      this.tryLogin();
+    },
+    tryLogin: function () {
       axios
         .post(requestURL + "login", {
           accountId: this.accountId,
           password: this.password,
         })
         .then((response) => {
-          if (response.hasOwnProperty("data")) {
+          if (this.isLoginSucceed(response)) {
             this.$emit("on-login", response.data);
           } else {
-            alert("오류");
+            alert("로그인 오류");
           }
         })
         .catch((error) => {
           console.log(error);
         });
+    },
+    isLoginSucceed: function (response) {
+      return response.hasOwnProperty("data");
     },
   },
 };
@@ -306,7 +315,7 @@ let model = new Vue({
   methods: {
     onLoginSuccess: function (member) {
       this.loginMember = member;
-      this.$router.push({ name: "mainViewComponent" });
+      this.$router.push("mainView");
     },
   },
 });
