@@ -1,9 +1,15 @@
 const requestURL = "http://localhost:8080/";
 
+/**
+ * 마스터 메뉴를 선택하지 않았을 때 메인화면 가운데 보여줄 빈 페이지 컴포넌트
+ */
 let EmptyPageComponent = {
   template: `<div></div>`,
 };
 
+/**
+ * 업무일지 조회 메뉴 선택시 메인화면 가운데 보여줄 업무일지 리스트 조회 컴포넌트
+ */
 let ReportListComponent = {
   template: `
   <div>
@@ -32,7 +38,7 @@ let ReportListComponent = {
   data: function () {
     return {
       reports: [],
-      content: {},
+      content: {}, // router로 이동하여 열렸을 시 itemContent 객체를 받아올 데이터
       startDate: "",
       endDate: "",
     };
@@ -68,13 +74,16 @@ let ReportListComponent = {
   },
 };
 
+/**
+ * 보고서 작성 메뉴 선택시 메인 화면 가운데 보여줄 보고서 작성용 컴포넌트
+ */
 let WriteReportComponent = {
   template: `
   <div class="report-container">
     <h1 class="w3-text-teal">업무일지 작성</h1>
     <div class="report-content-container">
       <label class="label-input-datetime">
-        작성일자: {{ formatDate(inputData) }}
+        작성일자: {{ formatDate(inputDate) }}
       </label>
       <input type="button" id="registry-report" class="w3-button w3-black" value="등록">
 
@@ -83,11 +92,11 @@ let WriteReportComponent = {
   </div>`,
   data: function () {
     return {
-      inputData: "",
+      inputDate: "",
     };
   },
   created: function () {
-    this.inputData = formatDateTime(new Date());
+    this.inputDate = formatDateTime(new Date());
   },
   methods: {
     formatDate: function (date) {
@@ -96,6 +105,9 @@ let WriteReportComponent = {
   },
 };
 
+/**
+ * 메인 화면 가운데 보여줄 컴포넌트에 대한 라우터
+ */
 let mainRouter = new VueRouter({
   routes: [
     {
@@ -116,6 +128,9 @@ let mainRouter = new VueRouter({
   ],
 });
 
+/**
+ * 로그인 성공시 보여줄 메인화면 컴포넌트
+ */
 let MainViewComponent = {
   template: `
   <div class="main-view-component">
@@ -171,7 +186,6 @@ let MainViewComponent = {
     return {
       masterMenu: [],
       subMenu: [],
-      respValue: [],
       sideBar: "",
       loginUser: {},
     };
@@ -197,6 +211,9 @@ let MainViewComponent = {
       this.openSideBar();
       this.getSubMenu(masterId);
     },
+    openSideBar: function () {
+      this.sideBar.style.display = "block";
+    },
     getSubMenu: function (masterId) {
       axios
         .get(requestURL + "menu/sub?parentId=" + masterId)
@@ -217,9 +234,6 @@ let MainViewComponent = {
         this.openSideBar();
       }
     },
-    openSideBar: function () {
-      this.sideBar.style.display = "block";
-    },
     closeSideBar: function () {
       this.sideBar.style.display = "none";
     },
@@ -231,6 +245,9 @@ let MainViewComponent = {
   },
 };
 
+/**
+ * 로그인용 컴포넌트
+ */
 let LoginComponent = {
   template: `
   <div>
@@ -288,6 +305,9 @@ let LoginComponent = {
   },
 };
 
+/**
+ * 화면 처음 진입시 보여줄 컴포넌트에 대한 라우터
+ */
 let loginRouter = new VueRouter({
   routes: [
     {
@@ -320,6 +340,11 @@ let model = new Vue({
   },
 });
 
+/**
+ * Date를 받아서 yyyy-mm-dd hh:nn:ss 형식의 문자열로 반환한다
+ * @param {Date} dateTime 변환할 Date
+ * @returns 형식에 맞춘 일시를 표현하는 문자열
+ */
 function formatDateTime(dateTime) {
   const paramDate = new Date(dateTime);
   const dt = {
@@ -334,6 +359,11 @@ function formatDateTime(dateTime) {
   return dt.year() + "-" + dt.month() + "-" + dt.day() + " " + dt.hour() + ":" + dt.min() + ":" + dt.sec();
 }
 
+/**
+ * Date를 받아서 yyyy-mm-dd 형식의 문자열로 반환한다.
+ * @param {Date} date 변환할 Date
+ * @returns 형식에 맞춘 날짜를 표현하는 문자열
+ */
 function formatDate(date) {
   return new Date(date).toISOString().substring(0, 10);
 }
