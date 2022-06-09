@@ -85,22 +85,60 @@ let WriteReportComponent = {
       <label class="label-input-datetime">
         작성일자: {{ formatDate(inputDate) }}
       </label>
-      <input type="button" id="registry-report" class="w3-button w3-black" value="등록">
+      <input type="button" id="registry-report" class="w3-button w3-black" value="등록" @click="onClickRegistryReport">
+      <label class="report-status">
+        {{ reportStatus.statName }}
+      </label>
 
-      <textarea class="report-content w3-input w3-border"></textarea>
+      <textarea class="report-content w3-input w3-border" v-model="reportContent"></textarea>
     </div>
   </div>`,
   data: function () {
     return {
       inputDate: "",
+      reportContent: "",
+      loginUser: {},
+      reportStatus: { statCode: "I", statName: "신규" },
     };
   },
   created: function () {
     this.inputDate = formatDateTime(new Date());
+    this.loginUser = this.$route.query.loginUser;
   },
   methods: {
     formatDate: function (date) {
       return formatDate(date);
+    },
+    onClickRegistryReport: function () {
+      let report = {
+        member: this.loginUser,
+        content: this.reportContent,
+      };
+
+      this.registryReport(report);
+    },
+    registryReport: function (report) {
+      console.log(report);
+      axios
+        .post(requestURL + "report", report)
+        .then((response) => {
+          if (this.isRegistrySucceed(response)) {
+            alert("작성완료");
+            this.changeReportStat();
+          } else {
+            alert("업무일지 등록 오류");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    isRegistrySucceed: function (response) {
+      return response.status === 200;
+    },
+    changeReportStat: function () {
+      this.$set(this.reportStatus, "statCode", "U");
+      this.$set(this.reportStatus, "statName", "수정");
     },
   },
 };
@@ -162,7 +200,7 @@ let MainViewComponent = {
       <a class="w3-bar-item w3-button w3-hover-black" href="#" v-for="item in subMenu" v-bind:key="item.id" @click="onClickSubMenu">
         <router-link
           class="w3-bar-item w3-button w3-hover-black w3-animate-top"
-          v-bind:to="{ name: item.itemContent.reqUrl, query: {content: item.itemContent} }"
+          v-bind:to="{ name: item.itemContent.reqUrl, query: {content: item.itemContent, loginUser: loginUser} }"
         >
           {{ item.menuName }}
         </router-link>
@@ -300,7 +338,7 @@ let LoginComponent = {
         });
     },
     isLoginSucceed: function (response) {
-      return response.hasOwnProperty("data");
+      return response.status === 200;
     },
   },
 };
