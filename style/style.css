@@ -42,9 +42,13 @@ h6 {
 .report-content-container {
   height: 100%;
 }
-.label-input-datetime {
+.label-input-datetime,
+.report-status {
   font-size: large;
   margin-right: 20px;
+}
+.report-status {
+  margin-left: 10px;
 }
 
 #btn-login {
