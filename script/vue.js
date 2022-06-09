@@ -118,7 +118,6 @@ let WriteReportComponent = {
       this.registryReport(report);
     },
     registryReport: function (report) {
-      console.log(report);
       axios
         .post(requestURL + "report", report)
         .then((response) => {
