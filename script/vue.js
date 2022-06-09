@@ -119,7 +119,7 @@ let WriteReportComponent = {
     },
     registryReport: function (report) {
       axios
-        .post(requestURL + "report", report)
+        .post(this.registryUrl(), report)
         .then((response) => {
           if (this.isRegistrySucceed(response)) {
             alert("작성완료");
@@ -131,6 +131,16 @@ let WriteReportComponent = {
         .catch((error) => {
           console.log(error);
         });
+    },
+    registryUrl: function () {
+      if (this.isNewReport()) {
+        return requestURL + "report";
+      } else {
+        return "";
+      }
+    },
+    isNewReport: function () {
+      return this.reportStatus.statCode === "I";
     },
     isRegistrySucceed: function (response) {
       return response.status === 200;
