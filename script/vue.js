@@ -28,7 +28,7 @@ let ReportListComponent = {
     <div class="report-content">
       <ul class="w3-ul w3-border">
         <li><h3>작성내역</h3></li>
-        <li v-for="report in reports" :key="report.id">
+        <li class="w3-hover-black" v-for="report in reports" :key="report.id" @click="onClickReport(report)">
           {{ formatDateTime(report.inputDate) }}
         </li>
       </ul>
@@ -41,6 +41,7 @@ let ReportListComponent = {
       content: {}, // router로 이동하여 열렸을 시 itemContent 객체를 받아올 데이터
       startDate: "",
       endDate: "",
+      loginUser: {},
     };
   },
   created: function () {
@@ -49,6 +50,8 @@ let ReportListComponent = {
     let nowDate = new Date();
     this.plusDays(nowDate, 1);
     this.endDate = formatDate(nowDate);
+
+    this.loginUser = this.$route.query.loginUser;
   },
   methods: {
     onSearchBtnClick: function () {
@@ -70,6 +73,9 @@ let ReportListComponent = {
     },
     formatDateTime: function (dateTime) {
       return formatDateTime(dateTime);
+    },
+    onClickReport: function (report) {
+      this.$emit("click-report", report);
     },
   },
 };
@@ -93,36 +99,37 @@ let WriteReportComponent = {
       <textarea class="report-content w3-input w3-border" v-model="reportContent"></textarea>
     </div>
   </div>`,
+  props: ["loginUser", "report"],
   data: function () {
     return {
       inputDate: "",
       reportContent: "",
-      loginUser: {},
       reportStatus: { statCode: "I", statName: "신규" },
     };
   },
   created: function () {
     this.inputDate = formatDateTime(new Date());
-    this.loginUser = this.$route.query.loginUser;
+
+    if (this.isModify()) {
+      this.reportContent = this.report.content;
+      this.inputDate = formatDateTime(this.report.inputDate);
+      this.reportStatus.statCode = "U";
+      this.reportStatus.statName = "수정";
+    }
   },
   methods: {
     formatDate: function (date) {
       return formatDate(date);
     },
     onClickRegistryReport: function () {
-      let report = {
-        member: this.loginUser,
-        content: this.reportContent,
-      };
-
-      this.registryReport(report);
+      this.registryReport();
     },
-    registryReport: function (report) {
-      axios
-        .post(this.registryUrl(), report)
+    registryReport: function () {
+      this.reQuestRegistryReport()
         .then((response) => {
           if (this.isRegistrySucceed(response)) {
             alert("작성완료");
+            // TODO 작성완료 후 업무일지 정보를 다시 받아와서 키값을 저장해야함
             this.changeReportStat();
           } else {
             alert("업무일지 등록 오류");
@@ -132,11 +139,23 @@ let WriteReportComponent = {
           console.log(error);
         });
     },
+    reQuestRegistryReport: function () {
+      let report = {
+        member: this.loginUser,
+        content: this.reportContent,
+      };
+
+      if (this.isNewReport()) {
+        return axios.post(this.registryUrl(), report);
+      } else {
+        return axios.put(this.registryUrl(), report);
+      }
+    },
     registryUrl: function () {
       if (this.isNewReport()) {
         return requestURL + "report";
       } else {
-        return "";
+        return requestURL + "report/" + this.report.id;
       }
     },
     isNewReport: function () {
@@ -148,6 +167,9 @@ let WriteReportComponent = {
     changeReportStat: function () {
       this.$set(this.reportStatus, "statCode", "U");
       this.$set(this.reportStatus, "statName", "수정");
+    },
+    isModify: function () {
+      return this.report.hasOwnProperty("content");
     },
   },
 };
@@ -209,7 +231,7 @@ let MainViewComponent = {
       <a class="w3-bar-item w3-button w3-hover-black" href="#" v-for="item in subMenu" v-bind:key="item.id" @click="onClickSubMenu">
         <router-link
           class="w3-bar-item w3-button w3-hover-black w3-animate-top"
-          v-bind:to="{ name: item.itemContent.reqUrl, query: {content: item.itemContent, loginUser: loginUser} }"
+          v-bind:to="{ name: item.itemContent.reqUrl, query: {content: item.itemContent} }"
         >
           {{ item.menuName }}
         </router-link>
@@ -220,7 +242,7 @@ let MainViewComponent = {
     <div class="w3-main" style="margin-left: 250px">
       <div class="w3-row w3-padding-64 main-container">
         <div class="w3-twothird w3-container main-content">
-          <router-view></router-view>
+          <router-view @click-report="modifyReportForm" :report="report" :loginUser="loginUser"></router-view>
         </div>
       </div>
       <!-- END MAIN -->
@@ -235,6 +257,7 @@ let MainViewComponent = {
       subMenu: [],
       sideBar: "",
       loginUser: {},
+      report: {},
     };
   },
   mounted: function () {
@@ -288,6 +311,10 @@ let MainViewComponent = {
       if (this.sideBar.style.display === "block") {
         this.closeSideBar();
       }
+    },
+    modifyReportForm: function (report) {
+      this.report = report;
+      this.$router.push("report");
     },
   },
 };
