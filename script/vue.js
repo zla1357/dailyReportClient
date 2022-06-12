@@ -89,22 +89,21 @@ let WriteReportComponent = {
     <h1 class="w3-text-teal">업무일지 작성</h1>
     <div class="report-content-container">
       <label class="label-input-datetime">
-        작성일자: {{ formatDate(inputDate) }}
+        작성일자: {{ formatDate(report.inputDate) }}
       </label>
       <input type="button" id="registry-report" class="w3-button w3-black" value="등록" @click="onClickRegistryReport">
       <label class="report-status">
         {{ reportStatus.statName }}
       </label>
 
-      <textarea class="report-content w3-input w3-border" v-model="reportContent"></textarea>
+      <textarea class="report-content w3-input w3-border" v-model="report.content"></textarea>
     </div>
   </div>`,
-  props: ["loginUser", "report"],
+  props: ["loginUser", "propReport"],
   data: function () {
     return {
-      inputDate: "",
-      reportContent: "",
       reportStatus: {},
+      report: {},
     };
   },
   created: function () {
@@ -112,18 +111,21 @@ let WriteReportComponent = {
   },
   methods: {
     initData: function () {
-      this.inputDate = formatDateTime(new Date());
+      this.report.inputDate = formatDateTime(new Date());
       this.reportStatus = {
         statCode: "I",
         statName: "입력",
       };
 
       if (this.isModify()) {
+        this.report = this.propReport;
         this.reportContent = this.report.content;
-        this.inputDate = formatDateTime(this.report.inputDate);
         this.reportStatus.statCode = "U";
         this.reportStatus.statName = "수정";
       }
+    },
+    isModify: function () {
+      return this.propReport.hasOwnProperty("content");
     },
     formatDate: function (date) {
       return formatDate(date);
@@ -132,12 +134,12 @@ let WriteReportComponent = {
       this.registryReport();
     },
     registryReport: function () {
-      this.reQuestRegistryReport()
+      this.requestRegistryReport()
         .then((response) => {
           if (this.isRegistrySucceed(response)) {
             alert("작성완료");
-            // TODO 작성완료 후 업무일지 정보를 다시 받아와서 키값을 저장해야함
             this.changeReportStat();
+            this.report = response.data;
           } else {
             alert("업무일지 등록 오류");
           }
@@ -146,16 +148,16 @@ let WriteReportComponent = {
           console.log(error);
         });
     },
-    reQuestRegistryReport: function () {
+    requestRegistryReport: function () {
       let report = {
         member: this.loginUser,
-        content: this.reportContent,
+        content: this.report.content,
       };
 
       if (this.isNewReport()) {
         return axios.post(this.registryUrl(), report);
       } else {
-        return axios.put(this.registryUrl(), report);
+        return axios.put(this.registryUrl(), this.report);
       }
     },
     registryUrl: function () {
@@ -174,9 +176,6 @@ let WriteReportComponent = {
     changeReportStat: function () {
       this.$set(this.reportStatus, "statCode", "U");
       this.$set(this.reportStatus, "statName", "수정");
-    },
-    isModify: function () {
-      return this.report.hasOwnProperty("content");
     },
   },
 };
@@ -249,7 +248,7 @@ let MainViewComponent = {
     <div class="w3-main" style="margin-left: 250px">
       <div class="w3-row w3-padding-64 main-container">
         <div class="w3-twothird w3-container main-content">
-          <router-view @click-report="modifyReportForm" :report="report" :loginUser="loginUser"></router-view>
+          <router-view @click-report="modifyReportForm" :propReport="report" :loginUser="loginUser"></router-view>
         </div>
       </div>
       <!-- END MAIN -->
