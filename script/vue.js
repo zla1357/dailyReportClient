@@ -44,7 +44,7 @@ let ReportListComponent = {
       loginUser: {},
     };
   },
-  created: function () {
+  mounted: function () {
     this.startDate = formatDate(new Date());
 
     let nowDate = new Date();
@@ -104,20 +104,27 @@ let WriteReportComponent = {
     return {
       inputDate: "",
       reportContent: "",
-      reportStatus: { statCode: "I", statName: "신규" },
+      reportStatus: {},
     };
   },
   created: function () {
-    this.inputDate = formatDateTime(new Date());
-
-    if (this.isModify()) {
-      this.reportContent = this.report.content;
-      this.inputDate = formatDateTime(this.report.inputDate);
-      this.reportStatus.statCode = "U";
-      this.reportStatus.statName = "수정";
-    }
+    this.initData();
   },
   methods: {
+    initData: function () {
+      this.inputDate = formatDateTime(new Date());
+      this.reportStatus = {
+        statCode: "I",
+        statName: "입력",
+      };
+
+      if (this.isModify()) {
+        this.reportContent = this.report.content;
+        this.inputDate = formatDateTime(this.report.inputDate);
+        this.reportStatus.statCode = "U";
+        this.reportStatus.statName = "수정";
+      }
+    },
     formatDate: function (date) {
       return formatDate(date);
     },
@@ -262,7 +269,7 @@ let MainViewComponent = {
   },
   mounted: function () {
     this.getMasterMenu();
-    this.$router.push("empty");
+    this.$router.replace("empty");
     this.sideBar = this.$refs.sideBar;
     this.loginUser = this.member;
   },
@@ -308,13 +315,15 @@ let MainViewComponent = {
       this.sideBar.style.display = "none";
     },
     onClickSubMenu: function () {
+      this.report = {};
+
       if (this.sideBar.style.display === "block") {
         this.closeSideBar();
       }
     },
     modifyReportForm: function (report) {
       this.report = report;
-      this.$router.push("report");
+      this.$router.replace("report");
     },
   },
 };
@@ -404,12 +413,12 @@ let model = new Vue({
   },
   router: loginRouter,
   created: function () {
-    this.$router.push("login");
+    this.$router.replace("login");
   },
   methods: {
     onLoginSuccess: function (member) {
       this.loginMember = member;
-      this.$router.push("mainView");
+      this.$router.replace("mainView");
     },
   },
 });
